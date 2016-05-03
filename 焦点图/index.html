@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+  <title>此插件只是手机端的练习，不兼容pc</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+ <script type="text/javascript">
+      
+        var html = document.querySelector('html');
+        var rem = html.offsetWidth / 6.4;
+        html.style.fontSize = rem + "px";
+    </script>
+<style type="text/css">
+html,body {-webkit-text-size-adjust:none;-webkit-user-select:none;padding:0;margin:0;}
+ul,li{list-style:none; margin:0; padding:0;}
+body,html{width: 100%;height: 100%;left: 0; top: 0; position:relative; }
+body{background-size: 100% 100%;  background: #000;}
+img src="none.png"{ -webkit-user-select:none; overflow: hidden;}
+input,select{-webkit-user-select:auto; }
+a[title="站长统计"]{ display: none}
+a{ text-decoration: none;}
+.banner{width:6.4rem;height:100%;overflow:hidden;position:relative;margin:0 auto;}
+.banner ul{width:8rem;height:2.5rem;margin-top:2rem;-webkit-transition:-webkit-transform 500ms;position:absolute;top:1rem;left:0.4rem;}
+.banner ul li{width:2rem;height:2.5rem;float:left;z-index:1;position:relative;}
+.banner ul li img{-webkit-transform:scale(1,1);-webkit-transition:-webkit-transform 500ms,opacity 500ms;;opacity:0.5;width:100%;height:100%;z-index:1;}
+.banner ul li.on img{opacity:1;-webkit-transform:scale(1.32,1.32);z-index:9;}
+.banner ul li.on{z-index:9;}
+</style>
+</head>
+<body>
+    <div class="banner" id="ban">
+    	<ul>
+    		<li><img src="img/1.png" height="100%" width="100%"></li>
+    		<li class="on"><img src="img/2.png" height="100%" width="100%"></li>
+    		<li><img src="img/3.png" height="100%" width="100%"></li>
+    		<li><img src="img/4.png" height="100%" width="100%"></li>
+    	</ul>
+    </div>
+</body>
+<script src="js/zepto.min.js"></script>
+<script src="js/touch_for_zepto.js"></script>
+<script type="text/javascript">
+// var sUserAgent = navigator.userAgent.toLowerCase(),
+// 	isAndroid = sUserAgent.match(/android/i),
+//  isTouchPad = (/hp-tablet/gi).test(navigator.appVersion),
+// 	hasTouch = 'ontouchstart' in window && !isTouchPad,
+// 	swipeleft=hasTouch ? 'swipeLeft': 'null',
+// 	swiperight=hasTouch ? 'swipeRight': 'null';
+window.onload = function() {
+    banner = function(options) {
+        var that = this;
+        that.options = {
+            id: null,
+            itemWidth: 0,
+            _onchangeend: null,
+
+        }
+        for (var i in options) {
+            that.options[i] = options[i];
+        }
+         // console.log(that.options[i])
+        that.sliindex = 1,
+        that.slider = $(that.options.id + " ul");
+        that.sli = that.slider.find("li");
+        console.log(that.slider); 
+        that.slider.css("width", that.sli.length * that.options.itemWidth + 'rem'); 
+        that.slider.swipeLeft(function() {
+            that.next()
+        }) 
+        that.slider.swipeRight(function() {
+            that.prev()
+        }) 
+        that.slider[0].addEventListener("webkitTransitionEnd",function() {
+            that.options._onchangeend()
+        },
+        false) 
+        that._ChangeEnd = that.onchangeend;
+        // console.log(that.onchangeend)
+        // console.log(that._ChangeEnd)
+        that.options._onchangeend = function() {
+            if (that._ChangeEnd) {
+                that._ChangeEnd(that.sliindex)
+            }
+        }
+        console.log(that._ChangeEnd) 
+        console.log(that.sliindex)
+    }
+    banner.prototype = {
+        // handleEvent:function(e){
+        // 	switch(e.type){
+        // 		case swipeleft:that.prev(e);
+        // 		case swiperight:that.next(e);
+        // 	}
+        // }
+        // bind:function(type,el,bubble){
+        // 	(el||that.slider).addEventListener(type,this,!!bubble)
+        // }
+        move: function(e) {
+            var that = this;
+            that.slider.css("-webkit-transform", "translate(" + -1 * that.options.itemWidth * (that.sliindex - 1) + "rem,0)");
+            that.sli.eq(that.sliindex).addClass('on').siblings().removeClass('on');
+            console.log(that.sliindex)
+        },
+        prev: function(e) {
+            var that = this;
+            if (that.sliindex <= 0) {
+                return;
+            }
+            that.sliindex--;
+            that.move();
+        },
+        next: function(e) {
+            var that = this;
+            if (that.sliindex >= (that.sli.length - 1)) {
+                return;
+                console.log("chao")
+            }
+            that.sliindex++;
+            that.move()
+        },
+        onchangeend: function(idx) {
+            var that = this;
+            console.log(idx)
+            // that.sli.eq(idx).addClass('on').siblings().removeClass('on')
+        },
+    }
+    var ban = new banner({
+        id: '#ban',
+        itemWidth: '2',
+    })
+}
+var nzSlider = {
+    createNew: function() {
+        var ctrl = {},
+        para = {};
+        ctrl.private = {},
+        para.data = {},
+        para.obj = {},
+        para.event = {};
+        para.data.nowIdx = 1;
+        para.data.moveLen;
+        para.obj.$slider;
+        para.obj.$item;
+        para.event.onChangeEnd;
+
+        ctrl.init = function(_para) {
+            para.data.moveLen = _para.itemWidth;
+            para.obj.$slider = $(_para.id + " ul");
+            para.obj.$item = para.obj.$slider.find("li");
+            para.obj.$slider.css("width", para.obj.$item.length * para.data.moveLen) 
+            para.obj.$slider[0].addEventListener("webkittransitionend",function(evt) {
+                if (evt.target != para.obj.$slider[0]) {
+                    return;
+                }
+                para.data.off = false;
+                para.event.onChangeEnd();
+            },
+            false);
+            para.event._onChangeEnd = _para.onChangeEnd;
+            para.event.onChangeEnd = function() {
+                if (para.event._onChangeEnd) {
+                    para.event._onChangeEnd(para.data.nowIdx)
+                }
+            }
+            para.obj.$slider.swipeLeft(function() {
+                ctrl.next();
+            });
+            para.obj.$slider.swipeRight(function() {
+                ctrl.prev()
+            });
+            para.data.off = false;
+        }
+        ctrl.private.move = function() {
+            para.obj.$slider.css("-webkit-transform", "translate(")
+        }
+        ctrl.prev = function() {
+            if (para.data.nowIdx <= 0 || para.data.off) {
+                return;
+            }
+            para.data.off = true;
+            ctrl.private.move()
+        }
+        ctrl.next = function() {
+            if (para.data.nowIdx >= (para.obj.$item.length - 1) || para.data.off) {
+                return;
+            }
+            para.data.off = true;
+            para.data.nowIdx++;
+            ctrl.private.move()
+        }
+        return ctrl;
+    }
+}
+</script>
+</html>
